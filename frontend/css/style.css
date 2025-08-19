@@ -1,0 +1,119 @@
+body {
+    background: #f8f9fa;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    background-color: #ff6f61;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #ff6f61;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #ff4f3f;
+}
+
+.navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 700;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    background-color: white;
+    color: #ff6f61 !important;
+    text-decoration: none;
+}
+
+.nav-link {
+    color: white;
+    font-weight: normal;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 111, 97, 0.7);
+    color: #fff;
+}
+
+.nav-link.active {
+    color: white;
+    font-weight: 700;
+    background-color: #ff4f3f;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(255, 79, 63, 0.6);
+}
+
+.navbar .container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* 好友列表按鈕 */
+#chat-room-list button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+#chat-room-list button.active {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* 聊天訊息氣泡 */
+.chat-message {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    max-width: 70%;
+    word-break: break-word;
+    clear: both;
+}
+
+.chat-message.me {
+    background-color: #d1f7c4;
+    float: right;
+    text-align: right;
+}
+
+
+.chat-message.other {
+    background-color: #f1f0f0;
+    float: left;
+    text-align: left;
+}
+
+.read-status {
+    font-size: 0.75em;
+    color: #888;
+    margin-left: 5px;
+}
+
+.message-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
