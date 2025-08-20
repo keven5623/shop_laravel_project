@@ -3,13 +3,16 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        Product::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // 關閉外鍵檢查
+        Product::truncate(); 
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // 開啟外鍵檢查
 
         Product::insert([
             [

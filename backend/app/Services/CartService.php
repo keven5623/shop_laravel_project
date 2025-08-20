@@ -36,7 +36,7 @@ class CartService
     public function addItem(int $userId, int $productId, int $quantity)
     {
         $cart = $this->cartRepo->createCartIfNotExist($userId);
-        $this->cartRepo->addItem($cart->id, $productId, $quantity);
+        $this->cartRepo->addItem($cart->id, $productId, $quantity, $cart->user_id);
     }
 
     public function removeItem(int $userId, int $itemId)

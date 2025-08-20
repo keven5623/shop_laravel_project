@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # PHP-FPM Backend
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: laravel_backend
+    volumes:
+      - ../:/var/www/html
+    networks:
+      - laravel
+    depends_on:
+      - mysql
+      - redis
+
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: laravel_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ../:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - laravel
+
+  # MySQL
+  mysql:
+    image: mysql:8
+    container_name: laravel_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shop_project
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3307:3306"  # 避免跟本機衝突
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+  # Redis
+  redis:
+    image: redis:7
+    container_name: laravel_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - laravel
+
+  # Laravel Queue Worker
+  queue:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: laravel_queue
+    command: php artisan queue:work --tries=3 --verbose
+    volumes:
+      - ../:/var/www/html
+    depends_on:
+      - backend
+      - redis
+      - mysql
+    networks:
+      - laravel
+
+  # Laravel Echo Server
+  echo:
+    image: node:20-alpine
+    container_name: laravel_echo
+    working_dir: /var/www/html
+    volumes:
+      - ../:/var/www/html
+    command: sh -c "npm install -g laravel-echo-server && laravel-echo-server start"
+    ports:
+      - "6002:6001"  # 映射到宿主 6002
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - laravel
+
+volumes:
+  mysql_data:
+
+networks:
+  laravel:
+    driver: bridge

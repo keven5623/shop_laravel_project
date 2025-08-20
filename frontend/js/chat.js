@@ -10,7 +10,9 @@ let myId = null;
 // 初始化 Echo
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: 'http://127.0.0.1:6001'
+    host: `${window.location.hostname}:6002`,
+    transports: ['websocket', 'polling'],
+    forceTLS: false
 });
 
 // =====================

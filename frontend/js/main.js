@@ -1,8 +1,12 @@
-// 等待使用者登入後才載入資料
 window.addEventListener('user-logged-in', async () => {
     try {
         await loadCategories();
         await loadProducts();
+
+        // 初始化購物車
+        if (typeof renderCart === 'function') await renderCart();
+        if (typeof updateCartCount === 'function') updateCartCount();
+        if (typeof updateOrderCount === 'function') updateOrderCount();
     } catch (err) {
         console.error('登入後載入資料失敗', err);
     }
