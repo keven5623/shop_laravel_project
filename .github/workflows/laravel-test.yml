@@ -35,11 +35,12 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --working-dir=backend --no-progress --prefer-dist
+        run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs
 
       - name: Setup .env.testing
         run: |
           cp backend/.env.example backend/.env.testing
+          echo "APP_ENV=testing" >> backend/.env.testing
           echo "DB_CONNECTION=mysql" >> backend/.env.testing
           echo "DB_HOST=127.0.0.1" >> backend/.env.testing
           echo "DB_PORT=3306" >> backend/.env.testing
@@ -53,16 +54,5 @@ jobs:
       - name: Run migrations
         run: php backend/artisan migrate --env=testing
 
-      # - name: Run tests
-      #   run: php backend/artisan test --env=testing
-
       - name: Run tests
-        run: vendor/bin/phpunit --configuration backend/phpunit.xml
-        env:
-          APP_ENV: testing
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: laravel
-          DB_USERNAME: root
-          DB_PASSWORD: root
+        run: php backend/artisan test --env=testing
