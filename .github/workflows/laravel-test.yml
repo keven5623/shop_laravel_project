@@ -1,0 +1,57 @@
+name: Laravel Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, bcmath, mysqli, pdo_mysql
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --working-dir=backend --no-progress --prefer-dist
+
+      - name: Setup .env.testing
+        run: |
+          cp backend/.env.example backend/.env.testing
+          echo "DB_CONNECTION=mysql" >> backend/.env.testing
+          echo "DB_HOST=127.0.0.1" >> backend/.env.testing
+          echo "DB_PORT=3306" >> backend/.env.testing
+          echo "DB_DATABASE=laravel" >> backend/.env.testing
+          echo "DB_USERNAME=root" >> backend/.env.testing
+          echo "DB_PASSWORD=root" >> backend/.env.testing
+
+      - name: Generate app key
+        run: php backend/artisan key:generate --env=testing
+
+      - name: Run migrations
+        run: php backend/artisan migrate --env=testing
+
+      - name: Run tests
+        run: php backend/artisan test --env=testing
