@@ -41,6 +41,6 @@ it('fails to login with invalid credentials', function () {
 
     $response->assertStatus(401);
     $response->assertJson([
-        'message' => 'Unauthorized'
+        'message' => '帳號或密碼錯誤'
     ]);
 });
