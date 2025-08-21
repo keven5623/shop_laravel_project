@@ -39,7 +39,15 @@ jobs:
 
       # 4️⃣ 設定 .env
       - name: Setup environment
-        run: cp backend/.env.example backend/.env
+        run: |
+          cp backend/.env.example backend/.env
+          echo "APP_ENV=testing" >> backend/.env
+          echo "DB_CONNECTION=mysql" >> backend/.env
+          echo "DB_HOST=mysql" >> backend/.env
+          echo "DB_PORT=3306" >> backend/.env
+          echo "DB_DATABASE=laravel" >> backend/.env
+          echo "DB_USERNAME=root" >> backend/.env
+          echo "DB_PASSWORD=root" >> backend/.env
 
       # 5️⃣ 產生 app key
       - name: Generate app key
@@ -55,7 +63,7 @@ jobs:
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
+          DB_HOST: mysql
           DB_PORT: 3306
           DB_DATABASE: laravel
           DB_USERNAME: root
