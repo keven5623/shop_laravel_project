@@ -5,8 +5,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('can login with correct credentials', function () {
-    $user = User::factory()->create([
+it('logs in successfully with valid credentials', function () {
+    User::factory()->create([
         'email' => 'keven5623@gmail.com',
         'password' => bcrypt('keven3210')
     ]);
@@ -24,8 +24,8 @@ it('can login with correct credentials', function () {
     ]);
 });
 
-it('cannot login with wrong credentials', function () {
-    $user = User::factory()->create([
+it('fails to login with invalid credentials', function () {
+    User::factory()->create([
         'email' => 'keven5623@gmail.com',
         'password' => bcrypt('keven3210')
     ]);

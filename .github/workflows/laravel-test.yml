@@ -16,8 +16,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: laravel
-        ports:
-          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -25,40 +23,35 @@ jobs:
           --health-retries=3
 
     steps:
+      # 1️⃣ 取得程式碼
       - uses: actions/checkout@v3
 
+      # 2️⃣ 安裝 PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           extensions: mbstring, bcmath, mysqli, pdo_mysql
-          coverage: none
 
+      # 3️⃣ 安裝 Composer 套件 (含 dev)
       - name: Install Composer dependencies
-        run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs
+        run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs --dev
 
-      - name: Install PestPHP
-        run: composer require --working-dir=backend --dev pestphp/pest --with-all-dependencies
+      # 4️⃣ 設定 .env
+      - name: Setup environment
+        run: cp backend/.env.example backend/.env
 
-      - name: Setup .env.testing
-        run: |
-          cp backend/.env.example backend/.env.testing
-          echo "APP_ENV=testing" >> backend/.env.testing
-          echo "DB_CONNECTION=mysql" >> backend/.env.testing
-          echo "DB_HOST=127.0.0.1" >> backend/.env.testing
-          echo "DB_PORT=3306" >> backend/.env.testing
-          echo "DB_DATABASE=laravel" >> backend/.env.testing
-          echo "DB_USERNAME=root" >> backend/.env.testing
-          echo "DB_PASSWORD=root" >> backend/.env.testing
-
+      # 5️⃣ 產生 app key
       - name: Generate app key
-        run: php backend/artisan key:generate --env=testing
+        run: php backend/artisan key:generate
 
+      # 6️⃣ 執行 migrations
       - name: Run migrations
         run: php backend/artisan migrate --env=testing
 
+      # 7️⃣ 執行 Pest 測試
       - name: Run Pest tests
-        run: php backend/vendor/bin/pest
+        run: php backend/vendor/bin/pest --configuration backend/phpunit.xml
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql
