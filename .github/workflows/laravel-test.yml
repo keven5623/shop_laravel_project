@@ -58,4 +58,12 @@ jobs:
         run: php backend/artisan migrate --env=testing
 
       - name: Run Pest tests
-        run: php backend/vendor/bin/pest --env=testing
+        run: php backend/vendor/bin/pest
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: laravel
+          DB_USERNAME: root
+          DB_PASSWORD: root
