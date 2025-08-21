@@ -37,38 +37,37 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs --dev
 
-      # 4️⃣ 安裝 PestPHP (確保測試工具存在)
+      # 4️⃣ 安裝 PestPHP
       - name: Install PestPHP
         run: composer require --working-dir=backend --dev pestphp/pest --with-all-dependencies
 
-      # 5️⃣ 設定 .env.testing
-      - name: Setup environment
+      # 5️⃣ 建立 .env.testing
+      - name: Setup .env.testing
         run: |
-          cp backend/.env.example backend/.env
-          echo "APP_ENV=testing" >> backend/.env
-          echo "DB_CONNECTION=mysql" >> backend/.env
-          echo "DB_HOST=mysql" >> backend/.env
-          echo "DB_PORT=3306" >> backend/.env
-          echo "DB_DATABASE=laravel" >> backend/.env
-          echo "DB_USERNAME=root" >> backend/.env
-          echo "DB_PASSWORD=root" >> backend/.env
+          cp backend/.env.example backend/.env.testing
+          echo "APP_ENV=testing" >> backend/.env.testing
+          echo "DB_CONNECTION=mysql" >> backend/.env.testing
+          echo "DB_HOST=mysql" >> backend/.env.testing
+          echo "DB_PORT=3306" >> backend/.env.testing
+          echo "DB_DATABASE=laravel" >> backend/.env.testing
+          echo "DB_USERNAME=root" >> backend/.env.testing
+          echo "DB_PASSWORD=root" >> backend/.env.testing
 
       # 6️⃣ 等 MySQL 完全啟動
-      - name: Wait for MySQL to be ready
+      - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL to start..."
           for i in {30..0}; do
-            if nc -z mysql 3306; then
-              echo "MySQL is up!"
+            if mysqladmin ping -hmysql -uroot -proot --silent; then
+              echo "MySQL is ready"
               break
             fi
-            echo "Waiting..."
+            echo "Waiting for MySQL..."
             sleep 2
           done
 
-      # 7️⃣ 產生 app key
+      # 7️⃣ 產生 app key (指定 env)
       - name: Generate app key
-        run: php backend/artisan key:generate
+        run: php backend/artisan key:generate --env=testing
         env:
           APP_ENV: testing
 
@@ -86,7 +85,7 @@ jobs:
 
       # 9️⃣ 執行 Pest 測試
       - name: Run Pest tests
-        run: php backend/vendor/bin/pest --configuration backend/phpunit.xml
+        run: php backend/vendor/bin/pest
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql
