@@ -16,6 +16,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: laravel
+        ports:
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping --silent"
           --health-interval=10s
@@ -53,19 +55,20 @@ jobs:
           echo "DB_USERNAME=root" >> backend/.env.testing
           echo "DB_PASSWORD=root" >> backend/.env.testing
 
-      # 6️⃣ 等 MySQL 完全啟動
+      # 6️⃣ 等待 MySQL 完全啟動
       - name: Wait for MySQL
         run: |
-          for i in {30..0}; do
+          echo "Waiting for MySQL to start..."
+          for i in {60..0}; do
             if mysqladmin ping -hmysql -uroot -proot --silent; then
               echo "MySQL is ready"
               break
             fi
-            echo "Waiting for MySQL..."
-            sleep 2
+            echo "Waiting..."
+            sleep 3
           done
 
-      # 7️⃣ 產生 app key (指定 env)
+      # 7️⃣ 產生 app key
       - name: Generate app key
         run: php backend/artisan key:generate --env=testing
         env:
