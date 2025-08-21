@@ -88,7 +88,7 @@ jobs:
 
       # 9️⃣ 執行 Pest 測試
       - name: Run Pest tests
-        run: php backend/vendor/bin/pest
+        run: php backend/vendor/bin/pest --configuration backend/phpunit.xml
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql
