@@ -58,7 +58,7 @@ jobs:
         run: php backend/artisan migrate --env=testing
 
       - name: Run Pest tests
-        run: php backend/vendor/bin/pest
+        run: php backend/artisan test
         env:
           APP_ENV: testing
           DB_CONNECTION: mysql
