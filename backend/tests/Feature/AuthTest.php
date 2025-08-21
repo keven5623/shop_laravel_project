@@ -18,9 +18,13 @@ it('logs in successfully with valid credentials', function () {
 
     $response->assertStatus(200);
     $response->assertJsonStructure([
+        'user' => [
+            'id',
+            'name',
+        ],
         'token',
         'token_type',
-        'expires_in'
+        'expires_at'
     ]);
 });
 
