@@ -37,6 +37,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs
 
+      - name: Install PestPHP
+        run: composer require --working-dir=backend --dev pestphp/pest --with-all-dependencies
+
       - name: Setup .env.testing
         run: |
           cp backend/.env.example backend/.env.testing
@@ -54,5 +57,5 @@ jobs:
       - name: Run migrations
         run: php backend/artisan migrate --env=testing
 
-      - name: Run tests
-        run: php backend/artisan test --env=testing
+      - name: Run Pest tests
+        run: php backend/vendor/bin/pest --env=testing
