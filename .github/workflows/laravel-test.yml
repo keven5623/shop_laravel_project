@@ -37,7 +37,11 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --working-dir=backend --no-progress --prefer-dist --ignore-platform-reqs --dev
 
-      # 4️⃣ 設定 .env
+      # 4️⃣ 安裝 PestPHP (確保測試工具存在)
+      - name: Install PestPHP
+        run: composer require --working-dir=backend --dev pestphp/pest --with-all-dependencies
+
+      # 5️⃣ 設定 .env.testing
       - name: Setup environment
         run: |
           cp backend/.env.example backend/.env
@@ -49,15 +53,36 @@ jobs:
           echo "DB_USERNAME=root" >> backend/.env
           echo "DB_PASSWORD=root" >> backend/.env
 
-      # 5️⃣ 產生 app key
+      # 6️⃣ 等 MySQL 完全啟動
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {30..0}; do
+            if mysqladmin ping -h mysql -uroot -proot --silent; then
+              break
+            fi
+            echo 'Waiting for MySQL...'
+            sleep 1
+          done
+
+      # 7️⃣ 產生 app key
       - name: Generate app key
         run: php backend/artisan key:generate
+        env:
+          APP_ENV: testing
 
-      # 6️⃣ 執行 migrations
+      # 8️⃣ 執行 migrations
       - name: Run migrations
         run: php backend/artisan migrate --env=testing
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: mysql
+          DB_HOST: mysql
+          DB_PORT: 3306
+          DB_DATABASE: laravel
+          DB_USERNAME: root
+          DB_PASSWORD: root
 
-      # 7️⃣ 執行 Pest 測試
+      # 9️⃣ 執行 Pest 測試
       - name: Run Pest tests
         run: php backend/vendor/bin/pest --configuration backend/phpunit.xml
         env:
